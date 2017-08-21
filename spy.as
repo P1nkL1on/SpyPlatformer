@@ -4,8 +4,9 @@
 		
 		_root.hero = u; u._height = 40;
 		u.can_jump_timer = 0; u.side = 0; u._x = 200;
+		u.want_shoot = 0;
 		u.onEnterFrame = function (){
-			human.be_human (this);
+			//human.be_human (this);
 			physics.be_physic_object (this);
 			for (var i = 0; i < _root.updates; i++)
 				if (human.is_alive (this)){
@@ -22,8 +23,10 @@
 						 this.wants_to_pass = this.standing_on; 
 						 
 					this.can_jump_timer--; if (this.ground)this.can_jump_timer = 5;
-					if (Key.isDown (1))
-						ballistic.shoot_bullet ("bullet_usuall", this._x + 10, this._y - this._height / 2, 5, Math.PI / 4)
+					if (Key.isDown (1)) this.want_shoot ++; else this.want_shoot = 0;
+					if (this.want_shoot == 1)
+						ballistic.shoot_bullet ("bullet_usuall", this._x + 15 * (-1 + 2 * ( _root._xmouse > this._x ) ), this._y - this._height / 2, 30, 
+												Math.PI +  Math.atan2 ( this._y - this._height / 2 - _root._ymouse, this._x - _root._xmouse ));
 				}
 			
 		}

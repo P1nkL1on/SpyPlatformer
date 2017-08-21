@@ -8,13 +8,15 @@
 		u.onEnterFrame = function (){
 			//human.be_human (this);
 			physics.be_physic_object (this);
+			human.be_human (this);
+			
 			for (var i = 0; i < _root.updates; i++)
 				if (human.is_alive (this)){
 					this.view_x = _root._xmouse; this.view_y = _root._ymouse;
 					this.side = (1 * (Key.isDown (68)) - 1 * (Key.isDown(65))); // what side do you wish to go
 					
 					if (this.ground)
-						this.sp_x = this.side * 2;
+						this.sp_x = this.side * ( .7 * this.leg_health + .4 );
 					else
 						this.sp_x += this.side * .1 * ( Math.abs ( this.sp_x + this.sp_x0 + this.side * .2) < 2 ); 
 						
@@ -24,11 +26,16 @@
 						 
 					this.can_jump_timer--; if (this.ground)this.can_jump_timer = 5;
 					if (Key.isDown (1)) this.want_shoot ++; else this.want_shoot = 0;
-					if (this.want_shoot == 1)
-						ballistic.shoot_bullet ("bullet_usuall", this._x + 15 * (-1 + 2 * ( _root._xmouse > this._x ) ), this._y - this._height / 2, 30, 
+					if (this.want_shoot == 1 && this.hand_health > 0)
+						ballistic.shoot_bullet ("bullet_usuall", this._x + 15 * (-1 + 2 * ( _root._xmouse > this._x ) ), this._y - this._height / 2, 35, 
 												Math.PI +  Math.atan2 ( this._y - this._height / 2 - _root._ymouse, this._x - _root._xmouse ));
+				}else{
+					this.sp_x = 0; this.sp_y = 0;
+					if (Key.isDown (67)){
+						human.become_human ( this );
+						_root.cam.clr.setTransform({rb: 0, gb: 0, bb: 0});
+					}
 				}
-			
 		}
 	}
 }

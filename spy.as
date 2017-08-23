@@ -6,6 +6,12 @@
 		u.can_jump_timer = 0; u.side = 0; u._x = 200;
 		u.want_shoot = 0;
 		u.onEnterFrame = function (){
+			if (Key.isDown (67)){
+						_root.time_slow = 1;
+						human.become_human ( this );
+						_root.cam.clr.setTransform({rb: 0, gb: 0, bb: 0});
+					}
+			
 			//human.be_human (this);
 			physics.be_physic_object (this);
 			human.be_human (this);
@@ -31,10 +37,6 @@
 												Math.PI +  Math.atan2 ( this._y - this._height / 2 - _root._ymouse, this._x - _root._xmouse ));
 				}else{
 					this.sp_x = 0; this.sp_y = 0;
-					if (Key.isDown (67)){
-						human.become_human ( this );
-						_root.cam.clr.setTransform({rb: 0, gb: 0, bb: 0});
-					}
 				}
 		}
 	}

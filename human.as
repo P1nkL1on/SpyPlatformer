@@ -16,15 +16,15 @@
 	static function be_human (who:MovieClip){
 		for (var u = 0; u<_root.updates; u++){
 			//who.blood_level -= who.blood_loss_speed;
-			who.blood_minimum = 6 * (who.head_health) * ( who.torso_health + 1 ) / 4 * (who.hand_health + 5) / 7 * (who.leg_health + 1) / 3;
-			who.blood_level = Math.max( who.blood_level - who.blood_loss_speed / 60,  who.blood_minimum); 
+			who.blood_minimum = 6 * (who.head_health) * ( who.torso_health ) / 3 * (who.hand_health + 2) / 4 * (who.leg_health + 1) / 3;
+			who.blood_level = Math.max( who.blood_level - who.blood_loss_speed / 90,  who.blood_minimum); 
 			if (who.hitTest(_root._xmouse, _root._ymouse, true))
 				_root.doll.watch = who;
 		}
 	}
 	
 	static function is_alive (who:MovieClip) : Boolean {
-		if (who.head_health <= 0 || who.torso_health <= 0 || who.blood_level < 0.5)
+		if (who.head_health <= 0 || who.torso_health <= 0 || who.blood_level < 1.5)
 			{ who.model.gotoAndStop('dead'); return false;}
 		return true;
 	}
@@ -52,10 +52,11 @@
 		if (who.has_jacket &&  who.jacket_hp[detect_side] >= 0){
 			who.jacket_hp[detect_side] = Math.max (0, who.jacket_hp[detect_side] - bullet.bullet_spd / 10); 
 			who.torso_health -= 1 - who.jacket_hp[detect_side] / 10;
+			who.blood_loss_speed += (10 - who.jacket_hp[detect_side]) * .01;	
 			trace ("> Jacket " + detect_side + " dealed "+who.jacket_hp[detect_side]);
 		} else {
 			// has no jacket
-			if (random(4) < 2 && who.hand_health > 0){	// руки не попали под выстрел
+			if (random(4) < 2 || who.hand_health <= 0){	// руки не попали под выстрел
 				trace (who._name + " torso shoted");
 				who.torso_health --;
 				who.blood_loss_speed += .15;

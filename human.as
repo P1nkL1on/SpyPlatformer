@@ -11,11 +11,13 @@
 		who.blood_loss_speed = 0;	// litr v sekundu
 		who.blood_minimum = who.blood_level;
 		who.jacket_hp = new Array(10, 10);
+		who.pain_percent = 0;
 	}
 	
 	static function be_human (who:MovieClip){
 		for (var u = 0; u<_root.updates; u++){
 			//who.blood_level -= who.blood_loss_speed;
+			if (who.pain_percent > 20 && who.pain_percent < 100) who.pain_percent -= .1; 
 			who.blood_minimum = -3 + 9 * (who.head_health) * ( who.torso_health + 1) / 4 * (who.hand_health + 5) / 7 * (who.leg_health + 3) / 5;
 			who.blood_level -= who.blood_loss_speed / (90 * (1 + 4 * (who.blood_level < who.blood_minimum)));
 			if (who.hitTest(_root._xmouse, _root._ymouse, true))
@@ -24,48 +26,63 @@
 	}
 	
 	static function is_alive (who:MovieClip) : Boolean {
-		if (who.head_health <= 0 || who.torso_health <= 0 || who.blood_level <= 1)
-			{ who.model.gotoAndStop('dead'); return false;}
+		if (who.head_health <= 0 || who.torso_health <= 0 || who.blood_level <= 1 || who.pain_percent >= 100)
+			{ 
+				who.model.gotoAndStop('dead');
+				return false;
+			}
 		return true;
 	}
-	
+	static function make_pain (who, much){
+		who.pain_percent = (who.pain_percent + much) * ((100 + much / 2) / 100);
+		if (much > 20 && random(5) == 0)
+			weapon.drop_weapon ( who );
+	}
 	static var iih = 0;	// injure_in_height
+	static var whoname = "";
+	static var impulse = 1;
 	static function injure (who:MovieClip, bullet:MovieClip){
-		bullet.damaged = true;
+		impulse = 1 * bullet.bullet_spd / 30; // trace ("? Bullet impulse " + Math.round ( impulse * 10)/ 10 );
+		bullet.damaged = true; whoname = who._name; if (who == _root.hero) whoname = ">>>" + whoname;
 		// checking collision
 		iih = (who._y - bullet._y) / (who.hitbox._height * who._yscale / 100);
 		iih = (iih - .2) * 1.5;
 		
 		if (iih > .8){	// head shot
-			if (!who.has_shelm) who.head_health --;
-						  else  {if (bullet.bullet_spd > 10)who.has_shelm = false; trace('shelm hit');}
-			trace (who._name + " headshoted");
+			if (!who.has_shelm || impulse > 2.5) {who.head_health --; make_pain (who, 80); trace (whoname + " - HEADSHOT");  }
+						  else  {if (bullet.bullet_spd > 10) who.has_shelm = false; make_pain (who, 3); trace(whoname + ' shelm  out');}
 			return;
 		}
 		if (iih < .25){	// leg shoted
 			if (who.leg_health > 1 || random(5) != 0)
-				{ if (who.leg_health > 0)who.leg_health --; else who.torso_health--; who.blood_loss_speed += .1;}
-			trace (who._name + " has " + who.leg_health + " leg healty");
+				{ if (who.leg_health > 0){who.leg_health --; make_pain (who, 30); trace (whoname + " - shoted in a leg");}
+									else {who.torso_health-=.5 * impulse; make_pain (who, 18); trace (whoname + " - too much leg shot damages a body");} who.blood_loss_speed += .1;}
 			return;
 		}
 		var detect_side:Number = (bullet._x < who._x) * 1;
-		
+		var jacket_lost:Number = 0; var health_lost:Number = 0;
 			// has no jacket
 		if (random(4) < 2 || who.hand_health <= 0){	// руки не попали под выстрел
 			if (who.has_jacket &&  who.jacket_hp[detect_side] >= 0){
-				who.jacket_hp[detect_side] = Math.max (0, who.jacket_hp[detect_side] - bullet.bullet_spd / 10); 
-				who.torso_health -= 1 - who.jacket_hp[detect_side] / 10;
-				who.blood_loss_speed += (10 - who.jacket_hp[detect_side]) * .01;	
-				trace ("> Jacket " + detect_side + " dealed "+who.jacket_hp[detect_side]);
+				jacket_lost = bullet.bullet_spd / 10 * impulse;				who.jacket_hp[detect_side] = Math.max (0, who.jacket_hp[detect_side] - jacket_lost); 
+				health_lost = 1 - who.jacket_hp[detect_side] / 10 * impulse;	who.torso_health -= health_lost;
+				who.blood_loss_speed += (10 - who.jacket_hp[detect_side]) * .01 * impulse;	
+				make_pain (who, 10); 
+				trace (whoname + "'s jacket shoted from " + detect_side +" side\n\tBlocked: " + Math.round(jacket_lost * 10) / 10+" Damaged: " + Math.round(health_lost*10)/10);
 			} else {
-				trace (who._name + " torso shoted");
-				who.torso_health --;
-				who.blood_loss_speed += .15;
+				make_pain (who, 30); 
+				trace (whoname + " torso shoted");
+				who.torso_health -= impulse;
+				who.blood_loss_speed += .15 * impulse;
 			}
 		} else {				// hand shoted
+			make_pain (who, 25); 
 			who.hand_health --;
-			who.blood_loss_speed += .1;	
-			trace (who._name + " has " + who.hand_health + " hand healty");
+			who.blood_loss_speed += .1 * impulse;	
+			trace (whoname + " hand shoted");
+			if (impulse > 2 || random(3) == 0 || who.hand_heath < .5){
+				trace (whoname + " dropped a weapon!"); weapon.drop_weapon ( who );
+			}
 		}
 		
 		//

@@ -18,9 +18,9 @@
 			for (var u = 0; u < _root.updates; u++){						
 			
 				this.get_aim_timer = (Math.abs (this._x - _root.hero._x) < 200 && Math.abs (this._y - _root.hero._y) < 100) * (this.get_aim_timer + 1);
-				if (this.get_aim_timer > 20){
-					this.view_x += (_root.hero._x - (random(101) / 100 - .5) * _root.hero._width - this.view_x) / this.aim_spd; 
-					this.view_y += (_root.hero._y - (random(100) / 100) * _root.hero._height - this.view_y) / this.aim_spd; 
+				if (this.get_aim_timer > 40 * this.shoot_skills){
+					this.view_x += (_root.hero._x - (random(101) / 100 - .5) * _root.hero._width - this.view_x) / (this.aim_spd * (1 - this.shoot_skills) + 2); 
+					this.view_y += (_root.hero._y - (random(100) / 100) * _root.hero._height - this.view_y) / (this.aim_spd * (1 - this.shoot_skills) + 2); 
 				} else { this.view_x = this._x; this.view_y = this._y; }
 				this.tar._alpha = ( this.get_aim_timer - 20 ) * 2.5;
 				this.tar._y = this.view_y; this.tar._x = this.view_x;
@@ -31,7 +31,7 @@
 				this.want_jump = (random(Math.max(Math.round(50 + this.get_aim_timer / 2), 10)) == 0 && _root.hero._y < this._y + 40);
 				
 				this.want_shot = (human.is_alive (this) && (random(Math.max(Math.round(100 - this.get_aim_timer / 10), 20)) == 0)
-									&& this.get_aim_timer > 30);
+									&& ((this.get_aim_timer > 60 * (1 - this.stressfull)) || (Math.abs (this.view_x - _root.hero._x) + Math.abs(this.view_y - _root.hero._y) < 70)));
 				//if (this.want_shot) trace ('bau');
 				if (!movement.being_humanoid_mover ( this )){
 					this._rotation += (90 - this._rotation) / 20;

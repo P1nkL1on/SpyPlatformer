@@ -7,8 +7,7 @@
 	}
 	
 	static function set_ground (who:MovieClip, type:Array){
-		Trace (who + ' is now ground');
-		
+		//Trace (who + ' is now ground');
 		who.is_ground = true; who.typ = type;
 		if (type == _root.ladders || type == _root.grounds){
 			if (who.velocity_grap == undefined)who.velocity_grap = 0;
@@ -27,8 +26,7 @@
 	}
 	
 	static function set_physic_object (who:MovieClip, mass:Number, velocity_grap:Number, tren_mult:Number, jump_back_mult:Number):Boolean{
-		Trace (who._name + " is now phys_obj" );
-		
+		//Trace (who._name + " is now phys_obj" );
 		who.is_physic_object = true;
 		who.mass = mass;
 		who.velocity_grap = velocity_grap;

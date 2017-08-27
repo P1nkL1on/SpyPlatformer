@@ -4,7 +4,7 @@
 		movement.become_humanoid_mover ( u );
 		
 		_root.hero = u; u._height = 40; u._x = 200;
-		u.can_jump_timer = 0; u.trigger_hold = 0;
+		u.can_jump_timer = 0; u.trigger_hold = 0; u.drop_wanna = 0;
 		
 		u.onEnterFrame = function (){
 			if (Key.isDown (67)){
@@ -26,6 +26,9 @@
 					this.trigger_hold = (Key.isDown(1))? this.trigger_hold + 1 : 0;
 					this.want_shot = ((this.trigger_hold > 0 && this.trigger_hold < 10)); 
 				this.want_crounch = (Key.isDown(Key.SHIFT));
+				this.want_get_weapon = (Key.isDown(69));
+					this.drop_wanna = (Key.isDown(71))? this.drop_wanna + 1 : 0;
+					this.want_drop_weapon = ((this.drop_wanna > 0 && this.drop_wanna < 10));
 				movement.being_humanoid_mover ( this );
 			}
 				/*if (human.is_alive (this)){

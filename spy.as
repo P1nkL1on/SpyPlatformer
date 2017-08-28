@@ -5,6 +5,9 @@
 		
 		_root.hero = u; u._height = 40; u._x = 200;
 		u.can_jump_timer = 0; u.trigger_hold = 0; u.drop_wanna = 0;
+		u.marked_guard = null;
+		
+		_root.attachMovie("enemy_target", "hero_mark", _root.getNextHighestDepth()); u.marker = _root.hero_mark; u.marker.gotoAndStop(2);
 		
 		u.onEnterFrame = function (){
 			if (Key.isDown (67)){
@@ -17,6 +20,10 @@
 			human.be_human (this);
 			
 			for (var i = 0; i < _root.updates; i++){
+				if (Math.abs ( this.marked_guard._x - this.view_x ) > 60 || Math.abs ( this.marked_guard._y - this.view_y ) > 60) this.marked_guard = null;
+				if (this.marked_guard!=null){ this.marker._x += (this.marked_guard._x - this.marker._x)/ 3; this.marker._y += (this.marked_guard._y - this.marked_guard._height - this.marker._y )/3; }
+				this.marker._visible = (this.marked_guard != null && human.is_alive (this.marked_guard)); if (!this.marker._visible){ this.marker._x = this.view_x; this.marker._y = this.view_y - 40; }
+				
 				this.view_x = _root._xmouse; this.view_y = _root._ymouse;
 				
 				this.want_go_left = (Key.isDown(65)); 
@@ -31,27 +38,6 @@
 					this.want_drop_weapon = ((this.drop_wanna > 0 && this.drop_wanna < 10));
 				movement.being_humanoid_mover ( this );
 			}
-				/*if (human.is_alive (this)){
-					this.view_x = _root._xmouse; this.view_y = _root._ymouse;
-					this.side = (1 * (Key.isDown (68)) - 1 * (Key.isDown(65))); // what side do you wish to go
-					
-					if (this.ground)
-						this.sp_x = this.side * ( .7 * this.leg_health + .4 );
-					else
-						this.sp_x += this.side * .1 * ( Math.abs ( this.sp_x + this.sp_x0 + this.side * .2) < 2 ); 
-						
-					if (Key.isDown (87) && this.can_jump_timer > 0){this.can_jump_timer = 0; this.sp_y0 = - 3.5; this.ground = false; this.standing_on = null; this.wants_to_pass = null;}
-					if (Key.isDown (83) && this.standing_on != null)
-						 this.wants_to_pass = this.standing_on; 
-						 
-					this.can_jump_timer--; if (this.ground)this.can_jump_timer = 5;
-					if (Key.isDown (1)) this.want_shoot ++; else this.want_shoot = 0;
-					if (this.want_shoot == 1 && this.hand_health > 0)
-						ballistic.shoot_bullet ("bullet_usuall", this._x + 15 * (-1 + 2 * ( _root._xmouse > this._x ) ), this._y - this._height / 2, 35, 
-												Math.PI +  Math.atan2 ( this._y - this._height / 2 - _root._ymouse, this._x - _root._xmouse ));
-				}else{
-					this.sp_x = 0; this.sp_y = 0;
-				}*/
 		}
 	}
 }

@@ -27,6 +27,7 @@
 	
 	static function set_physic_object (who:MovieClip, mass:Number, velocity_grap:Number, tren_mult:Number, jump_back_mult:Number):Boolean{
 		//Trace (who._name + " is now phys_obj" );
+		who.G_mult = 1;
 		who.is_physic_object = true;
 		who.mass = mass;
 		who.velocity_grap = velocity_grap;
@@ -47,7 +48,7 @@
 			check_collision_width_headers_and_walls ( who );
 			who.standing_on = check_collision_with_ground_and_ladders (who);
 			if (!who.ground){
-					who.sp_y0 += _root.G  / 60.0;
+					who.sp_y0 += _root.G  / 60.0 * who.G_mult;
 			} else {					
 					if (Math.abs(who.sp_x0) > .1) who.sp_x0 /= (1 + who.velocity_grap + who.standing_on.velocity_grap);// + (who.standing_on.velocity_grap) * (who.standing_on != null));
 										 	else  who.sp_x0 = 0;

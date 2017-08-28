@@ -10,20 +10,31 @@
 		
 		u._x = random(800); u._y = 0;  u.get_aim_timer = 0; u.aim_spd = 20;
 		u.sp_x0 = (random(41) - 20) / 60;
+		u.sleep = true;
 		
 		u.onEnterFrame = function (){
 			human.be_human (this);
 			physics.be_physic_object (this);
 			
 			for (var u = 0; u < _root.updates; u++){						
-			
+				// become target for player
+				if (this.hitTest(_root._xmouse, _root._ymouse, true))
+					{_root.doll.watch = this; _root.hero.marked_guard = this;}
+				//if (this.want_shot) trace ('bau');
+				if (!movement.being_humanoid_mover ( this )){
+					this._rotation += (90 - this._rotation) / 20;
+					this.tar.removeMovieClip(); this.tar = null;
+				}
+				if (!human.is_full_health(this)) this.sleep = false; if (this.sleep) {this.view_x = this._x; this.view_y = this._y; continue;}
+				
 				this.get_aim_timer = (Math.abs (this._x - _root.hero._x) < 200 && Math.abs (this._y - _root.hero._y) < 100) * (this.get_aim_timer + 1);
 				if (this.get_aim_timer > 40 * this.shoot_skills){
 					this.view_x += (_root.hero._x - (random(101) / 100 - .5) * _root.hero._width - this.view_x) / (this.aim_spd * (1 - this.shoot_skills) + 2); 
 					this.view_y += (_root.hero._y - (random(100) / 100) * _root.hero._height - this.view_y) / (this.aim_spd * (1 - this.shoot_skills) + 2); 
 				} else { this.view_x = this._x; this.view_y = this._y; }
+				
 				this.tar._alpha = ( this.get_aim_timer - 20 ) * 2.5;
-				this.tar._y = this.view_y; this.tar._x = this.view_x;
+				this.tar._y += (this.view_y - this.tar._y) / 3; this.tar._x += (this.view_x - this.tar._x) / 3;
 				
 				this.want_go_left = (random(30) == 0); 
 				this.want_go_right = (random(30) == 0);
@@ -32,11 +43,6 @@
 				
 				this.want_shot = (human.is_alive (this) && (random(Math.max(Math.round(100 - this.get_aim_timer / 10), 20)) == 0)
 									&& ((this.get_aim_timer > 60 * (1 - this.stressfull)) || (Math.abs (this.view_x - _root.hero._x) + Math.abs(this.view_y - _root.hero._y) < 70)));
-				//if (this.want_shot) trace ('bau');
-				if (!movement.being_humanoid_mover ( this )){
-					this._rotation += (90 - this._rotation) / 20;
-					this.tar.removeMovieClip(); this.tar = null;
-				}
 			}
 			/*
 			for (var u = 0; u < _root.updates; u++){

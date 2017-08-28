@@ -79,7 +79,7 @@
 	static function drop_weapon (hh, spd){
 		hh.current_weapon.host = null; 
 		if (spd == undefined){ hh.current_weapon.sp_x0 = ( hh.view_x - hh._x ) / 50; hh.current_weapon.sp_y0 = ( hh.view_y - hh._y ) / 20; }
-		if (spd == 2) { hh.current_weapon.sp_y0 = - 2; }
+						else { hh.current_weapon.sp_y0 = -spd; hh.current_weapon.sp_x0 = random(201)/100 - 1;}
 		hh.current_weapon = hh.alternate_weapon; hh.alternate_weapon = null;
 		hh.drop_wanna = 60; hh.want_drop_weapon = false;
 	}

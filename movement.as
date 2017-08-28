@@ -16,8 +16,14 @@
 	}
 	
 	static function being_humanoid_mover (who:MovieClip) : Boolean{
+			if (who.paus){ 
+				who.want_go_left = false; who.want_go_right = false;
+				who.want_jump = false; who.want_go_down = false;
+				who.want_crounch = false; who.want_shot = false;
+				return (human.is_alive (who));	
+			}
 			if (human.is_alive (who) && who.spirit){
-					who.model.gotoAndStop(1);
+					who.model.gotoAndStop((who.sleep)? 4:1);
 					//who.view_x = _root._xmouse; who.view_y = _root._ymouse;
 					who.side = (-1 * (who.want_go_left) + 1 * (who.want_go_right)); // what side do you wish to go
 					

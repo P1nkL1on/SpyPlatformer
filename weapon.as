@@ -37,11 +37,11 @@
 						  trace (_root.hitable[j].pater._name + " get a "+this._name );}
 			} else {
 				if (this == this.host.current_weapon){
-					this.angle = Math.atan2 ( this.host.view_y - this.host._y + this.host._height / 2, this.host.view_x - this.host._x ); 
+					this.angle = Math.atan2 ( this.host.view_y - this.host._y + this.host._xscale / 2.5 / 2, this.host.view_x - this.host._x ); 
 					this._x = this.host._x  + 10 * Math.cos (this.angle); 
-					this._y = this.host._y - this.host._height/2 + 10 * Math.sin (this.angle);
+					this._y = this.host._y - this.host._xscale / 2.5/2 + 10 * Math.sin (this.angle);
 					this._rotation = this.angle / Math.PI * 180; this._yscale = (( this.host.view_x > this.host._x ) * 2 - 1 ) * this.ys;
-				} else {this._x = this.host._x; this._y = this.host._y - this.host._height * .25; this._rotation = 0;}
+				} else {this._x = this.host._x; this._y = this.host._y - this.host._xscale / 2.5 * .25; this._rotation = 0;}
 				
 				for (var u = 0; u < _root.updates; u++){
 					this.model.gotoAndStop ((this.total_ammo > 0)? ((this.current_reload > 0)? 2 : 1) : 3 );
@@ -87,10 +87,10 @@
 	static function shoot_from_weapon (who:MovieClip, weapon:MovieClip){
 		who.trigger_hold = 60;
 		ballistic.shoot_bullet (weapon.bullet_type+"", 
-								who._x  + Math.cos (weapon.angle) * weapon.long,//+ //15 * (-1 + 2 * ( who.view_x > who._x ) ), 
-								who._y  + Math.sin (weapon.angle) * weapon.long - who._height / 2,//- //who._height / 2, 
+								who._x  + Math.cos (weapon.angle) * (weapon.long + 8),//+ //15 * (-1 + 2 * ( who.view_x > who._x ) ), 
+								who._y  + Math.sin (weapon.angle) * (weapon.long + 8) - who._xscale / 2.5 / 2,//- //who._xscale / 2.5 / 2, 
 								weapon.bullet_speed / 10, 
-								Math.PI +  Math.atan2 ( who._y - who._height / 2 - who.view_y, who._x - who.view_x ), who);
+								Math.PI +  Math.atan2 ( who._y - who._xscale / 2.5 / 2 - who.view_y, who._x - who.view_x ), who);
 	}
 	
 	static function swap_weapon (who:MovieClip){
@@ -111,5 +111,6 @@
 		who.host = null;
 		who.long = 10;
 		physics.set_physic_object (who, 1, .1, .2, .5);
+		who.bullet_reflecting_chance = 20;
 	}
 }

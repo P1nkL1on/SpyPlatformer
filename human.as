@@ -32,14 +32,14 @@
 		for (var u = 0; u<_root.updates; u++){
 				if (who.paus) continue;
 			//who.blood_level -= who.blood_loss_speed;
-				if (who.pain_percent > 20 && who.pain_percent < who.pain_threshold) who.pain_percent -= .02 * (Math.max(0, who.blood_minimum)) / 7; 
+				if (who.pain_percent > 20 && who.pain_percent < who.pain_threshold) who.pain_percent -= .04 * (Math.max(0, who.blood_minimum)) / 7; 
 				who.blood_minimum = -3 + 9 * (who.head_health) * ( who.torso_health + 1) / 4 * (who.hand_health + 5) / 7 * (who.leg_health + 3) / 5;
 				who.blood_level -= who.blood_loss_speed / (90 * (1 + 4 * (who.blood_level < who.blood_minimum))) * (1 - who.bleed_resist);
 			// checking a spirit loosing conditions
 				who.stunned_time = who.stunned_time - 1 * (who.stunned_time > 0);
 					if (Math.round(who.stunned_time) == 1){ who.stunned_time = - 200; who.spirit = true; who.stress_percent = who.stress_threshold / 2; who.refresh_timer = 150; ttrace (who, " reseted his mind!");}
 				who.refresh_timer = (who.refresh_timer + 1 ) %360;
-				if ( who.spirit && who.refresh_timer == 0 &&  random(101) < Math.round(30 *Math.exp(who.stress_percent - who.stress_threshold)))
+				if ( who.spirit && who.refresh_timer == 0 &&  random(101)*(1 - who.blood_loss_speed) < Math.round(30 *Math.exp(who.stress_percent - who.stress_threshold)))
 					{ who.spirit = false; who.stunned_time += 60 * 60 * 1; ttrace (who, "loose spirit for " + who.stunned_time / 60 +" sec");} 
 			// checking death mate
 				if (who.alive && (who.head_health <= 0 || who.torso_health <= 0 || who.blood_level <= 1 || who.pain_percent * (who.spirit) >= who.pain_threshold))
@@ -65,25 +65,27 @@
 		bullet.damaged = true;
 		var collision_place:Number = (who._y - bullet._y) / (who.hitbox._height * who._yscale / 100);
 		//collision_place = (collision_place - .2) * 1.35;
-		
 		ttrace (who, "was shoted by "+bullet.host._name);
+		
 		// top
-		if (collision_place > .8){
+		if (collision_place > .7){
 			if (!who.has_shelm || bullet_mv > 2.5)
-				{ who.head_health --; deal_damage( who, 80, 0, 1); ttrace(who, "headshoted"); }
+				{ who.head_health --; deal_damage( who, 80, 0, .4); who.blood_level --; ttrace(who, "headshoted"); }
 			else
 				{
 					var stun_chance:Number = 0;
-					if (bullet_mv >= 1)
-						{ who.has_shelm = false; deal_damage (who, 1, 10, 0); stun_chance = 5; ttrace (who, "loose shelm");}
+					if (bullet_mv >= 1.1)
+						{ who.has_shelm = false; deal_damage (who, 1, 10, 0); stun_chance = 20; ttrace (who, "loose shelm");}
 					else
-						{ deal_damage (who, 3, 1, .05 * (random(2) == 0)); stun_chance = 25; ttrace(who, "was shoted in a shelm");} 
+						{ if (random(2)==0) who.has_shelm = false; deal_damage (who, 3, 1, .05 * (random(2) == 0)); stun_chance = 25; ttrace(who, "was shoted in a shelm");} 
+					if (random(101) < stun_chance * 3) 
+						{ballistic.reflect_bullet (bullet); ttrace(who,'>>>bullet reflected');}
 					if (random(101) < stun_chance)
 						{ who.spirit = false; who.stunned_time += 30 * bullet_mv; ttrace(who, "was stunned for "+who.stunned_time / 60 +" sec");}
 				}
 		}
 		// middle
-		if (collision_place <= .8 && collision_place > .33){
+		if (collision_place <= .7 && collision_place > .33){
 			if (who.hand_health > 0 && random(2)==0){
 				deal_damage( who, 25, 30, .1 * bullet_mv);
 				who.hand_health --;

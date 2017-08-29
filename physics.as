@@ -35,6 +35,7 @@
 		who.jump_back_mult = jump_back_mult;
 		who.sp_x = who.sp_y = who.sp_x0 = who.sp_y0 = who.sp_x_was = 0;
 		who.ground = false;
+		who.bullet_reflecting_chance = 0;
 		who.wants_to_pass = null;
 		who.standing_on = null; // земля или объект, на котором мы стоим
 		if (who.hitbox == undefined){ TraceError ( who._name + ' does not have a hitbox called "hitbox"'); return false;}
@@ -58,7 +59,7 @@
 			// apllying inerce
 			if (who.sp_x == 0 && who.sp_x_was != 0 && Math.abs (who.sp_x0) < Math.abs (who.sp_x_was) &&
 				!(( who.sp_x0 > who.sp_x_was && who.sp_x_was > 0) || ( who.sp_x0 < who.sp_x_was && who.sp_x_was < 0)))
-					who.sp_x0 = who.sp_x_was;
+					who.sp_x0 = who.sp_x_was * .95;
 			who.sp_x_was = who.sp_x;
 		}
 		who._x += (who.sp_x + who.sp_x0) * _root.time_passed;

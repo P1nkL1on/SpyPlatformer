@@ -2,7 +2,12 @@
 	
 	//animation.model_goto( who:MovieClip, stance:String, frames:String, speed:Number, border:Boolean, direct:Number ){
 	
-	
+	static function leg_injure (who:MovieClip):String{
+		if (who.leg_health > 1.5) return "";
+		if (who.leg_health > .5) return "_injure";
+		return "_injure_much";
+		
+	}
 	static function animate (who:MovieClip){
 		var md:MovieClip = who.model;
 		var view_diff:Number = who.view_x - who._x;
@@ -12,7 +17,6 @@
 			if (who.sp_x > 0) md._xscale = md.xs; if (who.sp_x < 0) md._xscale = -md.xs;
 			
 			if (who.ground){
-				
 				//________________ground_animation________________
 				if (Math.abs ( who.sp_x + who.sp_x0 ) < .05) md.stand_timer ++; else md.stand_timer = 0;
 				if (md.stand_timer > 5 || (who.want_crounch == (md.crounch_height_meter == 1))){
@@ -25,34 +29,48 @@
 							animation.model_goto ( md, 'stand', 'seat_idle', 6, false, 1);
 					// ___________stand_animation_________________
 						if (!who.want_crounch && md.crounch_height_meter == 1)
-							animation.model_goto ( md, 'stand', 'stand_idle', 6, false, 1);
+							animation.model_goto ( md, 'stand', 'stand_idle' + leg_injure(who), 6, false, 1);
 				} else {
 					//________________________crounch__________________
 					if (who.want_crounch){
-						if (view_diff < 0) md._xscale = - md.xs; if (view_diff > 0) md._xscale = md.xs;
-						animation.model_goto ( md, 'walk', 'walk_crounch', 3, false, (md._xscale > 0 && who.sp_x > 0 || md._xscale < 0 && who.sp_x < 0)? 1 : -1 );
-					}else{
-						//__________________acselerate_n_run_______________
-						if (Math.abs (who.sp_x) > 0 || (Math.abs (who.sp_x0) <  who.walking_speed_max && md.btrz == false)){
-							md.btrz = false;
-							if (Math.abs ( who.sp_x + who.sp_x0 ) < who.walking_speed_max || (!animation.is_ready_both (md.gr) && md.stat == 'walk/walk_forward' ))	// slow run
-								{ 
-									if (md.move_side_str == undefined) md.move_side_str = 'for';
-									if (view_diff * md._xscale < 0){ md._xscale *= -1; md.move_side_str = 'back'; }else{ if (who.sp_x != 0)md.move_side_str = 'for'; }
-									
-									animation.model_goto ( md, 'walk', 'walk_'+md.move_side_str +'ward', Math.round(Math.max ( 2, 6 - 5 * (Math.abs ( who.sp_x + who.sp_x0 ) - .2))), false, 1); 
-									md.slow = true;
-								}
-							else{
-								if (md.slow)
-									{animation.model_goto ( md, 'walk', 'run_start', 5, false, 1); md.slow = !animation.is_ready (md.gr);}
-								else
-									animation.model_goto ( md, 'walk', 'run', 3, false, 1);
-							}
+						if (who.roll_timer == 0){
+							if (view_diff < 0) md._xscale = - md.xs; if (view_diff > 0) md._xscale = md.xs;
+								if ((md._xscale > 0 && who.sp_x > 0 || md._xscale < 0 && who.sp_x < 0)) md.crounch_type = "";
+								if ((md._xscale > 0 && who.sp_x < 0 || md._xscale < 0 && who.sp_x > 0)) md.crounch_type = "_back";
+							animation.model_goto ( md, 'walk', 'walk_crounch' + md.crounch_type, 3, false, 1 );
 						}else{
-						//_____________________tormoz_____________________
-							if (Math.abs (who.sp_x0) > 0)
-								{animation.model_goto ( md, 'walk', 'tormoz', 5, true, 1); md.btrz = true;}
+							//_____________roll_______________
+							animation.model_goto ( md, 'walk', 'roll', 4, true, 1 );
+						}
+					}else{
+						if (who.leg_health <= 1.5)
+							{
+								//______________leg_broken_walk_____________
+								animation.model_goto ( md, 'walk', 'run' + leg_injure(who), Math.round(Math.max ( 3, 6 - 5 * (Math.abs ( who.sp_x + who.sp_x0 ) - .2))), false, 1);
+							}
+						else
+							{
+							//__________________acselerate_n_run_______________
+							if (Math.abs (who.sp_x) > 0 || (Math.abs (who.sp_x0) <  who.walking_speed_max && md.btrz == false)){
+								md.btrz = false;
+								if (Math.abs ( who.sp_x + who.sp_x0 ) < who.walking_speed_max || (!animation.is_ready_both (md.gr) && md.stat == 'walk/walk_forward' ))	// slow run
+									{ 
+										if (md.move_side_str == undefined) md.move_side_str = 'for';
+										if (view_diff * md._xscale < 0){ md._xscale *= -1; md.move_side_str = 'back'; }else{ if (who.sp_x != 0)md.move_side_str = 'for'; }
+										animation.model_goto ( md, 'walk', 'walk_'+md.move_side_str +'ward', Math.round(Math.max ( 2, 6 - 5 * (Math.abs ( who.sp_x + who.sp_x0 ) - .2))), false, 1); 
+										md.slow = true;
+									}
+								else{
+									if (md.slow)
+										{animation.model_goto ( md, 'walk', 'run_start', 5, false, 1); md.slow = !animation.is_ready (md.gr);}
+									else
+										animation.model_goto ( md, 'walk', 'run', 3, false, 1);
+								}
+							}else{
+							//_____________________tormoz_____________________
+								if (Math.abs (who.sp_x0) > 0)
+									{animation.model_goto ( md, 'walk', 'tormoz', 5, true, 1); md.btrz = true;}
+							}
 						}
 					}
 				}

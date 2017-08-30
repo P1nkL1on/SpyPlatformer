@@ -14,6 +14,8 @@
 			if (who.jump_back_mult == undefined)who.jump_back_mult = 0;
 			if (who.is_passible == undefined)who.is_passible = false;
 			if (who.stairs_height == undefined) who.stairs_height = 5;}
+		if (type == _root.ladders)
+			who.is_ladder = true;
 		
 		who.number = type.length;
 		type.push (who);

@@ -86,11 +86,13 @@
 	
 	static function shoot_from_weapon (who:MovieClip, weapon:MovieClip){
 		who.trigger_hold = 60;
+		var add_ang:Number = (random(Math.round(1000 *  who.angle_add)) / 1000 - who.angle_add * .5) / 180 * Math.PI ; //trace (who.angle_add + '/' + add_ang * 180 / Math.PI);
+		if (isNaN(add_ang)) add_ang = 0;
 		ballistic.shoot_bullet (weapon.bullet_type+"", 
 								who._x  + Math.cos (weapon.angle) * (weapon.long + 8),//+ //15 * (-1 + 2 * ( who.view_x > who._x ) ), 
 								who._y  + Math.sin (weapon.angle) * (weapon.long + 8) - who._xscale / 2.5 / 2,//- //who._xscale / 2.5 / 2, 
 								weapon.bullet_speed / 10, 
-								Math.PI +  Math.atan2 ( who._y - who._xscale / 2.5 / 2 - who.view_y, who._x - who.view_x ), who);
+								Math.PI +  Math.atan2 ( who._y - who._xscale / 2.5 / 2 - who.view_y, who._x - who.view_x ) + add_ang, who);
 	}
 	
 	static function swap_weapon (who:MovieClip){

@@ -3,9 +3,10 @@
 		human.become_human ( u );
 		movement.become_humanoid_mover ( u );
 		
-		_root.hero = u; u._x = 500; u._y = 300; u._height /= 1.3;
+		_root.hero = u; u._x = 500; u._y = 300; //
 		u.can_jump_timer = 0; u.trigger_hold = 0; u.drop_wanna = 0;
 		u.marked_guard = null; u.to_run = 0; u.double_press_run = 0;
+		u.attachMovie('spy_model', 'model', u.getNextHighestDepth()); u.model._height /= 1.3; u.model._y = -14; u.model.xs = u.model._xscale;
 		
 		_root.attachMovie("enemy_target", "hero_mark", _root.getNextHighestDepth()); u.marker = _root.hero_mark; u.marker.gotoAndStop(2);
 		

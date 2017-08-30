@@ -5,7 +5,7 @@
 		
 		u.has_shelm = (random(2) == 0);
 		u.has_jacket = (random(2) == 0);
-		
+		u.attachMovie('guard_model', 'model', u.getNextHighestDepth()); u.model._height /= 1.3; u.model._y = -9; u.model.xs = -u.model._xscale;
 		_root.attachMovie("enemy_target", "et" + u, _root.getNextHighestDepth()); u.tar = _root["et" + u];
 		
 		u._x = random(800); u._y = 0;  u.get_aim_timer = 0; u.aim_spd = 20;

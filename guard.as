@@ -5,7 +5,7 @@
 		
 		u.has_shelm = (random(2) == 0);
 		u.has_jacket = (random(2) == 0);
-		u.attachMovie('guard_model', 'model', u.getNextHighestDepth()); u.model._height /= 1.3; u.model._y = -9; u.model.xs = -u.model._xscale;
+		u.attachMovie('guard_model', 'model', u.getNextHighestDepth());  u.model._y = - u.model._height / 2 + 1.2; u.model.xs = -u.model._xscale;
 		_root.attachMovie("enemy_target", "et" + u, _root.getNextHighestDepth()); u.tar = _root["et" + u];
 		
 		u._x = random(800); u._y = 0;  u.get_aim_timer = 0; u.aim_spd = 20;
@@ -30,7 +30,7 @@
 				this.get_aim_timer = (Math.abs (this._x - _root.hero._x) < 200 && Math.abs (this._y - _root.hero._y) < 100) * (this.get_aim_timer + 1);
 				if (this.get_aim_timer > 40 * this.shoot_skills){
 					this.view_x += (_root.hero._x - (random(101) / 100 - .5) * _root.hero._width - this.view_x) / (this.aim_spd * (1 - this.shoot_skills) + 2); 
-					this.view_y += (_root.hero._y - (random(100) / 100) * _root.hero._height - this.view_y) / (this.aim_spd * (1 - this.shoot_skills) + 2); 
+					this.view_y += (_root.hero._y - (random(100) / 100) * _root.hero.model.gr._height - this.view_y) / (this.aim_spd * (1 - this.shoot_skills) + 2); 
 				} else { this.view_x = this._x; this.view_y = this._y; }
 				
 				this.tar._alpha = ( this.get_aim_timer - 20 ) * 2.5;

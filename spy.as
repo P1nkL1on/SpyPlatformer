@@ -6,7 +6,7 @@
 		_root.hero = u; u._x = 500; u._y = 300; //
 		u.can_jump_timer = 0; u.trigger_hold = 0; u.drop_wanna = 0;
 		u.marked_guard = null; u.to_run = 0; u.double_press_run = 0;
-		u.attachMovie('spy_model', 'model', u.getNextHighestDepth()); u.model._height /= 1.3; u.model._y = -14; u.model.xs = u.model._xscale;
+		u.attachMovie('spy_model', 'model', u.getNextHighestDepth()); u.model._y = - u.model._height / 2 + 1.2; u.model.xs = u.model._xscale;
 		
 		_root.attachMovie("enemy_target", "hero_mark", _root.getNextHighestDepth()); u.marker = _root.hero_mark; u.marker.gotoAndStop(2);
 		
@@ -18,6 +18,8 @@
 					}
 			//human.be_human (this);
 			human_animation.animate(this);
+			human_animation.aim_to (this.model.hands);
+
 			physics.be_physic_object (this);
 			human.be_human (this);
 			
@@ -44,6 +46,7 @@
 					this.drop_wanna = (Key.isDown(71))? this.drop_wanna + 1 : 0;
 					this.want_drop_weapon = ((this.drop_wanna > 0 && this.drop_wanna < 10));
 				movement.being_humanoid_mover ( this );
+				
 			}
 		}
 	}

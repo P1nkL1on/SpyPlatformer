@@ -51,7 +51,7 @@
 			check_collision_width_headers_and_walls ( who );
 			who.standing_on = check_collision_with_ground_and_ladders (who);
 			if (!who.ground){
-					who.sp_y0 += _root.G  / 60.0 * who.G_mult;
+					who.sp_y0 = (who.sp_y0 + _root.G  / 60.0 * who.G_mult) / 1.01;
 			} else {					
 					if (Math.abs(who.sp_x0) > .1) who.sp_x0 /= (1 + who.velocity_grap + who.standing_on.velocity_grap);// + (who.standing_on.velocity_grap) * (who.standing_on != null));
 										 	else  who.sp_x0 = 0;

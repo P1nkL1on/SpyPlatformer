@@ -10,6 +10,7 @@
 		bl._x = b_x; bl._y = b_y; bl.host = host;
 		bl.sp_x0 = Math.cos ( ang ) * spd; bl.sp_y0 = Math.sin ( ang ) * spd; bl.bullet_spd = 0; bl.bl_rot = 0; bl.damaged = false;
 		bl.live_timer = 0; bl.dead = false; bl.get_to = null; bl.get_x_diff = 0; bl.get_y_diff = 0;
+		bl._rotation = ang / Math.PI * 180;
 		//
 		bullets.push(bl);
 	}
@@ -32,7 +33,7 @@
 		bl.live_timer += _root.time_passed; if (bl.live_timer > 300) bl.removeMovieClip();
 	}
 	static function bullet_move (bl:MovieClip){
-		steps = Math.round ( _root.time_passed *  .15 * (Math.abs(bl.sp_x0) + Math.abs(bl.sp_y0) ));
+		steps = Math.max(3, Math.round ( _root.time_passed *  .15 * (Math.abs(bl.sp_x0) + Math.abs(bl.sp_y0) )));
 		for (var  i = 0; i < steps * (bl.hitTest(_root.layer_background)); i++){
 			bx = bl._x + bl.sp_x0 * _root.time_passed * i / steps; 
 			by = bl._y + bl.sp_y0 * _root.time_passed * i / steps;

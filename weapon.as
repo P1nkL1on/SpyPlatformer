@@ -1,23 +1,22 @@
 ﻿class weapon{
 	static var num:Number = 0;
 	static function spawn_gun_inner ( path:String, Host:MovieClip, X, Y ){
-		_root.layer_physics.attachMovie("weapon_" + path, path + "_" + num, _root.layer_physics.getNextHighestDepth());
+		var weaponclass:String = "";
+		if (path.indexOf("gun") >= 0) weaponclass = "gun";
+		
+		_root.layer_physics.attachMovie("weapon_" + weaponclass, path + "_" + num, _root.layer_physics.getNextHighestDepth());
 		var wp:MovieClip = _root.layer_physics[path + "_" + num]; num++;
-		wp._x = X; wp._y = Y; wp._alpha = 10; wp.weapon_name = path;
+		wp._x = X; wp._y = Y; wp._alpha = 10; wp.weapon_name = path; wp.weapon_class = weaponclass;
 		
 		become_weapon (wp);
 		set_weapon_host (wp, Host);
 		
-		if ( path == "gun" ){
-			wp.mass = 2;
-			wp.magaz_ammo = 7;
-			wp.part_reload = 5;
-			wp.full_reload = 60;
-			wp.bullet_speed = 350;
-			wp.long = 10;
-		}
+		if ( path == "gun" )
+			{ wp.mass = 2; wp.magaz_ammo = 7;	wp.part_reload = 5;	wp.full_reload = 60; wp.bullet_speed = 350;	wp.long = 10; }
+		if ( path == "ttgun" )
+			{ wp.mass = 3.2; wp.magaz_ammo = 6;	wp.part_reload = 11;	wp.full_reload = 70; wp.bullet_speed = 480;	wp.long = 8; wp.shot_back = 33; wp.no_ammo_back = 12;}
 		
-		wp.total_ammo = 15 * wp.magaz_ammo;
+		wp.total_ammo = 5 * wp.magaz_ammo;
 		wp.current_ammo = wp.magaz_ammo;
 		wp.angle = 0; wp.ys = wp._yscale;
 		
@@ -47,10 +46,14 @@
 					}
 					if (this == this.host.current_weapon && this.host.hand_health > 0){	
 						if (this.host.want_shot && this.current_reload <= 0 && this.total_ammo <= 0)
-							{this.host.model.hands.pistol.gotoAndPlay( this.weapon_name + "_no_ammo" ); this.current_reload = this.part_reload;}
+							{this.host.model.hands.pistol.gotoAndPlay( this.weapon_class + "_no_ammo" ); 
+							sound_phys.sound (this.weapon_class + "_no_ammo", this, 0, 10);
+							this.current_reload = this.part_reload;}
 						if (this.host.want_shot && this.current_reload <= 0 && this.current_ammo > 0 && this.total_ammo > 0 && this.host.roll_timer == 0){
-							this.host.model.hands.pistol.gotoAndPlay( this.weapon_name + "_shoot" );
+							this.host.model.hands.pistol.gotoAndPlay( this.weapon_class + "_shoot" );
+							sound_phys.sound (this.weapon_name + "_shoot", this, 0, 10);
 							shoot_from_weapon (this.host, this); this.current_ammo --; this.total_ammo --;
+							if (this.current_ammo <=0 ) sound_phys.sound (this.weapon_name + "_reload", this, 0, 10);
 							this.current_reload =(this.current_ammo > 0)? this.part_reload : this.full_reload;
 						}
 						if (this.host.want_drop_weapon)
@@ -110,6 +113,8 @@
 		who.bullet_speed = 500;
 		who.host = null;
 		who.long = 10;
+		who.shot_back = 22;
+		who.no_ammo_back = 34;
 		physics.set_physic_object (who, 1, .1, .2, .5);
 		who.bullet_reflecting_chance = 20;
 	}

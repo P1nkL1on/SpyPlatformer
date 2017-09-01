@@ -22,6 +22,7 @@
 
 			physics.be_physic_object (this);
 			human.be_human (this);
+			sound_phys.check_listen_sound (this);
 			
 			for (var i = 0; i < _root.updates; i++){
 				if (Math.abs ( this.marked_guard._x - this.view_x ) > 60 || Math.abs ( this.marked_guard._y - this.view_y ) > 60) this.marked_guard = null;

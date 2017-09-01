@@ -1,5 +1,4 @@
 ﻿class movement{
-	
 	static function become_humanoid_mover (who:MovieClip){
 		// weapons
 		who.want_shot = false;
@@ -15,6 +14,8 @@
 		who.walking_speed_max = 2; who.jumping_height = 3.7;
 		who.view_x = who._x; who.view_y = who._y;
 		who.roll_timer = 0; who.roll_cd = 0; who.roll_spd = 0;
+		
+		sound_phys.set_volume_listener (who);
 	}
 	
 	static function being_humanoid_mover (who:MovieClip) : Boolean{
@@ -22,6 +23,7 @@
 				who.want_go_left = false; who.want_go_right = false;
 				who.want_jump = false; who.want_go_down = false;
 				who.want_crounch = false; who.want_shot = false;
+				who.step_sound_interval = 1;
 				return (human.is_alive (who));	
 			}
 			if (human.is_alive (who) && who.spirit){
@@ -52,6 +54,10 @@
 					if (who.roll_timer != 0 && who.ground) who.roll_timer += ((who.roll_timer > 0)? -1 : 1);	// descrease timer
 					if (who.roll_spd > 0) who.roll_spd -= .23 * (1 - .8 * !who.ground);
 					who.roll_cd -= 1 * (who.ground && who.roll_cd > 0);
+					// sound postmodertn
+					who.step_sound_interval -= Math.abs(who.sp_x + who.sp_x0) * who.ground * (who.roll_timer == 0);
+					if (who.step_sound_interval <= 0 || Math.abs(who.roll_timer) == 10)
+						{ sound_phys.sound ('step', who, 0, 0, 50 * Math.pow(1.8, Math.abs(who.sp_x + who.sp_x0))); who.step_sound_interval = 35 / (1 + .7 * (Math.abs(who.sp_x + who.sp_x0) <= 1.1 * who.walking_speed_max));}
 				}else{
 					who.sp_x = 0; who.sp_y = 0;
 					if (who.current_weapon != null) weapon.drop_weapon ( who );

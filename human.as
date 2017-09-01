@@ -64,16 +64,18 @@
 		var bullet_mv:Number = bullet.bullet_spd / 30;
 		bullet.damaged = true;
 		var collision_place:Number = (who._y - bullet._y) / (who.hitbox._height * who._yscale / 100);
+		var body_height:Number = (who.hitbox._height * who._yscale / 100);
 		//collision_place = (collision_place - .2) * 1.35;
 		ttrace (who, "was shoted by "+bullet.host._name);
 		
 		// top
 		if (collision_place > .7){
 			if (!who.has_shelm || bullet_mv > 2.5)
-				{ who.head_health --; deal_damage( who, 80, 0, .4); who.blood_level --; ttrace(who, "headshoted"); }
+				{ who.head_health --; deal_damage( who, 80, 0, .4); who.blood_level --; sound_phys.sound ('head_shot', who, 0, - .8 * body_height); ttrace(who, "headshoted"); }
 			else
 				{
 					var stun_chance:Number = 0;
+					sound_phys.sound ('shelm_shot', who, 0, - .9 * body_height);
 					if (bullet_mv >= 1.1)
 						{ who.has_shelm = false; deal_damage (who, 1, 10, 0); stun_chance = 20; ttrace (who, "loose shelm");}
 					else
@@ -91,7 +93,7 @@
 				who.hand_health --;
 				ttrace (who, "hand damaged");
 				if (bullet_mv > 2 || random(2) == 0 || who.hand_health < .5)
-					{weapon.drop_weapon (who, -2);  ttrace (who, "dropped a weapon");}
+					{weapon.drop_weapon (who, -2);  ttrace (who, "dropped a weapon"); sound_phys.sound ('body_shot', who, 0, - .6 * body_height);}
 			}else{
 				// detecting a side of shooting
 				var detect_side:Number = (bullet._x < who._x) * 1;
@@ -105,6 +107,7 @@
 						
 						deal_damage ( who, 10, 5, (10 - who.jacket_hp[detect_side]) * .01 * bullet_mv);
 						
+						sound_phys.sound ('jacket_shot', who, 0, - .5 * body_height);
 						ttrace (who, "damaged in a jacket. Recieve only " + Math.round(100 * health_lost) / 100);
 						ttrace (who, "jacket side " + detect_side + " have " + Math.round(100 * who.jacket_hp[detect_side]) /100+"/10");
 						
@@ -113,12 +116,14 @@
 					} else {
 						deal_damage ( who, 30 * bullet_mv, 20, .2 * bullet_mv );
 						who.torso_health -= bullet_mv;
+						sound_phys.sound ('body_shot', who, 0, - .5 * body_height);
 						ttrace (who, "was bodyshoted");
 					}
 			}
 		}
 		// bottom
 		if (collision_place <= .33){
+			sound_phys.sound ('body_shot', who, 0, - .2 * body_height);
 			if (who.leg_health > 0 && random(5) != 0)
 				{ who.leg_health--; deal_damage (who, 30, 40, .15 * bullet_mv); ttrace (who, "shoted in leg");}
 			else

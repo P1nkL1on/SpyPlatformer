@@ -27,6 +27,8 @@
 				bl._x = bl.get_to._x - bl.get_x_diff; bl._y = bl.get_to._y - bl.get_y_diff; 
 				if (!bl.damaged && bl.get_to.is_human == true && bl.bullet_spd != 0)
 					 human.injure ( bl.get_to, bl );
+				if (!bl.damaged && bl.get_to.is_human != true && bl.bullet_spd > 0)
+					{sound_phys.sound ('ground_shot', bl, 0, 0, bl.bullet_spd * 5); bl.damaged = true;}
 			}
 		}
 			

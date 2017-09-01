@@ -9,9 +9,16 @@
 		if (who._parent._parent.current_weapon == null)
 			{ for (var u = 0; u < _root.updates; u++){who.anim++; if (who._currentframe > 10 ) who.gotoAndStop(1);animation.animate(who, 1, 15, 6, 1, false);} return; }
 		// case of having gun
-		who.aim_angle = Math.atan2( who._parent._parent._y  - who._parent._height / 2- who._parent._parent.view_y,
+		var need_angle:Number =		Math.atan2( who._parent._parent._y  - who._parent._height / 2- who._parent._parent.view_y,
 								    who._parent._parent._x - who._parent._parent.view_x ) / Math.PI * 180;
-		if (who._parent._xscale < 0) who.aim_angle = 0 - who.aim_angle;
+		
+		if (who._parent._xscale >= 0){
+			if (Math.abs(who.aim_angle - need_angle) < 40)who.aim_angle += (need_angle - who.aim_angle) / 7; else who.aim_angle = need_angle;
+		} else {
+			who.aim_angle *= -1;
+			if (Math.abs(who.aim_angle - need_angle) < 40)who.aim_angle += (need_angle - who.aim_angle) / 7; else who.aim_angle = need_angle;
+			who.aim_angle *= -1;
+		}
 		who.gotoAndStop(20 + (10 * (who._parent._xscale < 0) + Math.round(10 - ((who.aim_angle) / 360 * 20))) % 20);
 		return;
 	}

@@ -15,7 +15,7 @@
 		u.onEnterFrame = function (){
 			human.be_human (this);
 			physics.be_physic_object (this);
-			
+			sound_phys.check_listen_sound (this);
 			for (var u = 0; u < _root.updates; u++){						
 				// become target for player
 				if (this.hitTest(_root._xmouse, _root._ymouse, true))
@@ -25,7 +25,9 @@
 					this._rotation += (90 - this._rotation) / 20;
 					this.tar.removeMovieClip(); this.tar = null;
 				}
-				if (!human.is_full_health(this)) this.sleep = false; if (this.sleep) {this.view_x = this._x; this.view_y = this._y; continue;}
+				
+				if (!human.is_full_health(this) || (this.heard_sounds.length > 0 && this.heard_sounds[this.heard_sounds.length - 1].indexOf("shot") >= 0)) this.sleep = false; 
+				if (this.sleep) {this.view_x = this._x; this.view_y = this._y; continue;}
 				
 				this.get_aim_timer = (Math.abs (this._x - _root.hero._x) < 200 && Math.abs (this._y - _root.hero._y) < 100) * (this.get_aim_timer + 1);
 				if (this.get_aim_timer > 40 * this.shoot_skills){

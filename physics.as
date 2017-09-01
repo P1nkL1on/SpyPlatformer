@@ -42,14 +42,15 @@
 		who.standing_on = null; // земля или объект, на котором мы стоим
 		if (who.hitbox == undefined){ TraceError ( who._name + ' does not have a hitbox called "hitbox"'); return false;}
 		
-		
 		return true; // everything is fine. no errors
 	}
 	
 	static function be_physic_object (who:MovieClip){
 		for (var upd = 0; upd < _root.updates; upd ++ ){
 			check_collision_width_headers_and_walls ( who );
+			who.sp_y_was = who.sp_y + who.sp_y0;
 			who.standing_on = check_collision_with_ground_and_ladders (who);
+			/*ground place sound*/ if ((who.sp_y_was > 1) && who.ground) sound_phys.sound ('ground', who, 0, 0, (who.sp_y_was) * 35)
 			if (!who.ground){
 					who.sp_y0 = (who.sp_y0 + _root.G  / 60.0 * who.G_mult) / 1.01;
 			} else {					

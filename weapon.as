@@ -67,6 +67,7 @@
 	static function set_weapon_host (ww, hh):Boolean{
 		if (hh.current_weapon == null){
 			ww.host = hh; hh.current_weapon = ww;
+			sound_phys.sound (ww.weapon_class + "_get", ww, 0, 10);
 			return true;
 		}else{
 			if (hh.alternate_weapon == null){
@@ -82,6 +83,7 @@
 						else { hh.current_weapon.sp_y0 = -spd; hh.current_weapon.sp_x0 = random(201)/100 - 1;}
 		hh.current_weapon = hh.alternate_weapon; hh.alternate_weapon = null;
 		hh.drop_wanna = 60; hh.want_drop_weapon = false;
+		hh.model.hands.pistol.gotoAndStop( hh.current_weapon.weapon_name );
 	}
 	
 	static function shoot_from_weapon (who:MovieClip, weapon:MovieClip){

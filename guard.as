@@ -26,7 +26,8 @@
 					this.tar.removeMovieClip(); this.tar = null;
 				}
 				
-				if (!human.is_full_health(this) || (this.heard_sounds.length > 0 && this.heard_sounds[this.heard_sounds.length - 1].indexOf("shot") >= 0)) this.sleep = false; 
+				if (!human.is_full_health(this) || 
+				   (this.heard_sounds.length > 0 && this.heard_sounds[this.heard_sounds.length - 1].indexOf("shot") >= 0 && this.heard_sounds_volume[this.heard_sounds.length - 1] > 90)) this.sleep = false; 
 				if (this.sleep) {this.view_x = this._x; this.view_y = this._y; continue;}
 				
 				this.get_aim_timer = (Math.abs (this._x - _root.hero._x) < 200 && Math.abs (this._y - _root.hero._y) < 100) * (this.get_aim_timer + 1);

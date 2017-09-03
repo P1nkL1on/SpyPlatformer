@@ -9,10 +9,11 @@
 	static var sound_speed:Number = 33; // 33
 	
 	static function initialise (){
-		push ("gun_shoot", 150, 80);
-		push ("gun_reload", 50);
+		push ("gun_get", 70);
+		push ("gun_shoot", 150, 35);
+		push ("gun_reload", 80);
 		push ("gun_no_ammo", 120, 250);
-		push ("ttgun_shoot", 500, 100);
+		push ("ttgun_shoot", 500, 60);
 		push ("ttgun_reload", 90);
 		push ("body_shot", 200, 500);
 		push ("head_shot", 230, 500);
@@ -23,7 +24,7 @@
 		push ("step_default", 40, 50);
 	}
 	static function push (nam:String, rad:Number, frequency:Number){
-		if (frequency == undefined) frequency = -1;
+		if (frequency == undefined) frequency = 100;
 		sound_names.push(nam); sound_rads.push(rad);
 		sounds.push(new Array()); sounds[sounds.length - 1].push(new Sound());
 		sounds[sounds.length - 1][0].ind = sounds.length - 1; 
@@ -31,17 +32,19 @@
 		sounds[sounds.length - 1][0].fr = frequency;
 		sounds[sounds.length - 1][0].onLoad = function(success:Boolean):Void 
 			{ if (success){ 
-				trace ("sounds/" + nam + "\t\t"+this.duration+"\t\t✔"); 
+				
 				if (this.fr == -1) 
 					this.fr = this.duration; // no need to load more
 				else
-					{ this.much = Math.max(1, Math.round(this.duration / this.fr)); 
-					  for (var i = 0; i < this.much; i++){ sounds[this.ind].push(new Sound());		// load reserve copyes
+					{ var much:Number = Math.max(1, Math.round(this.duration / this.fr)); 
+					  for (var i = 0; i < much; i++){ sounds[this.ind].push(new Sound());		// load reserve copyes
 														   sounds[this.ind][sounds[this.ind].length - 1].loadSound(this.path); 
 														   sounds[this.ind][sounds[this.ind].length - 1].path = sounds[this.ind][0].path; 
 														   sounds[this.ind][sounds[this.ind].length - 1].name = sounds[this.ind][0].name;   
 														  }}
-			}}
+			}
+			trace ("sounds/" + nam + "\t\t"+this.duration+"\t\t✔\t" + ((this.much == undefined)? 0 : this.much)); 
+			}
 	}
 	
 	static var ts:Number = 0;

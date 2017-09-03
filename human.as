@@ -9,7 +9,7 @@
 		who.pain_resist = .0 + random(11)/100;
 		who.bleed_resist = random(11)/100;
 		who.shoot_skills = .1 + random(51)/100;
-		who.pain_threshold = 100;
+		who.pain_threshold = 70 + random(31);
 		who.stress_threshold = 100;
 		
 		who.is_human = true;

@@ -119,5 +119,6 @@
 		who.no_ammo_back = 34;
 		physics.set_physic_object (who, 1, .1, .2, .5);
 		who.bullet_reflecting_chance = 20;
+		who.automatic = false;
 	}
 }

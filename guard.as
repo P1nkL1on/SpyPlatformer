@@ -24,6 +24,7 @@
 				if (!movement.being_humanoid_mover ( this )){
 					this._rotation += (90 - this._rotation) / 20;
 					this.tar.removeMovieClip(); this.tar = null;
+					
 				}
 				
 				if (!human.is_full_health(this) || 

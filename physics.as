@@ -16,7 +16,9 @@
 			if (who.stairs_height == undefined) who.stairs_height = 5;}
 		if (type == _root.ladders)
 			who.is_ladder = true;
-		
+		if (type == _root.walls)
+			who.is_wall = true;
+			
 		who.number = type.length;
 		type.push (who);
 		who.onUnload = function (){

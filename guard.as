@@ -12,6 +12,9 @@
 		u.sp_x0 = (random(41) - 20) / 60;
 		u.sleep = true;
 		
+		// vision and hear system to trigger warning state
+		u.scan_timer = 0; u.scan_dist = 400; u.scan_result = false; u.scan_frequency = 10;
+		
 		u.onEnterFrame = function (){
 			human.be_human (this);
 			physics.be_physic_object (this);
@@ -24,11 +27,18 @@
 				if (!movement.being_humanoid_mover ( this )){
 					this._rotation += (90 - this._rotation) / 20;
 					this.tar.removeMovieClip(); this.tar = null;
-					
 				}
+				// watching y sides
+				this.scan_timer += _root.time_passed;
+				if (Math.abs(this.scan_timer - this.scan_frequency) < 1) _root.clear();
+				if (this.scan_timer > this.scan_frequency && human.is_alive(this))
+					{ /*each time with scanning*/ this.scan_timer = 0; 
+					if (Math.sqrt(Math.pow(this._x - _root.hero._x,2) + Math.pow(this._y - _root.hero._y,2)) < this.scan_dist)
+						this.scan_result = background.can_see( this, _root.hero );} 
 				
-				if (!human.is_full_health(this) || 
-				   (this.heard_sounds.length > 0 && this.heard_sounds[this.heard_sounds.length - 1].indexOf("shot") >= 0 && this.heard_sounds_volume[this.heard_sounds.length - 1] > 90)) this.sleep = false; 
+				// 				was injured						hear something
+				if (!human.is_full_health(this) || hear_something (this, new Array("shot", "shoot"), 90, 5) || this.scan_result) 
+						this.sleep = false; 
 				if (this.sleep) {this.view_x = this._x; this.view_y = this._y; continue;}
 				
 				this.get_aim_timer = (Math.abs (this._x - _root.hero._x) < 200 && Math.abs (this._y - _root.hero._y) < 100) * (this.get_aim_timer + 1);
@@ -65,5 +75,17 @@
 					this.tar.removeMovieClip(); this.tar = null;
 			}}*/
 		}
+	}
+
+	
+	static function hear_something ( who:MovieClip, sound_names:Array, sound_minimal_volume:Number, see_in_last:Number ):Boolean {
+		if (who.heard_sounds.length <= 0) return false; else {if (see_in_last > who.heard_sounds.length) see_in_last = who.heard_sounds.length;}
+		
+		for (var j = 0; j < who.sound_names.length(); j++)
+			for (var i = who.heard_sounds.length - 1; i>=0; i--)
+				if (who.heard_sounds[i].indexOf(sound_names[j]) >= 0 &&
+					who.heard_sounds_volume[i] > sound_minimal_volume)
+						return true;
+		return false;
 	}
 }

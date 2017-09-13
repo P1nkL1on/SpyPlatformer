@@ -11,7 +11,7 @@
 	}
 	
 	static function can_see (p1:MovieClip, p2:MovieClip) : Boolean{
-		_root.clear();
+		
 		
 		var res:Boolean = true;
 		var x1:Number = p1._x; var x2:Number = p2._x; 
